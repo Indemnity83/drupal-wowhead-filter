@@ -1,0 +1,5 @@
+name = Wowhead
+description = Allows the use of [item][/item] tags that resolve to a wowhead mouse-over link
+package = Input filters
+core = 6.x
+version = 6.x-1.0
