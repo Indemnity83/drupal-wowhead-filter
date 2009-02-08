@@ -1,0 +1,8 @@
+SUMMARY
+
+This module implements a standard Drupal filter to allow the conversion of [item][/item] tags into fancy links back to Wowhead for particular items. The links get colored automatically based on their quality level.
+
+CHANGELOG
+
+Version 6.x-1.0 - Dec 11, 2008
+   * Initial Release

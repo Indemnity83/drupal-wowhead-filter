@@ -1,0 +1,88 @@
+<?php
+/**
+ * @file
+ *   Allow the use of [item] filters. 
+ *
+ * @todo
+ *   Add support for spell, quests, achievements etc.
+ */
+ 
+ /**
+ * Implementation of hook_init()
+ */
+function wowhead_init() {
+	// Get Wowhead's fancy javascript in there
+	drupal_add_js('http://www.wowhead.com/widgets/power.js');
+}
+
+/**
+ * Implementation of hook_filter()
+ */
+function wowhead_filter($op, $delta = 0, $format = -1, $text = '') {
+  switch ($op) {
+    case 'list':
+      return array(0 => t('Wowhead [item] filter'));
+    case 'description':
+      return t('Converts [item] tags to links/tooltips from http://wowhead.com');
+    case 'prepare' :
+      return $text;
+    case 'process':
+      return _wowhead_filter_process($text, $format);
+    case 'settings' :
+      return;
+  }
+}
+
+/**
+ * Implementation of lootz_hook_filter_description()
+ */
+function wowhead_filter_description() {
+  return t('Converts [item] tags to links/tooltips using data from <a href="http://wowhead.com">Wowhead</a>.');
+}
+
+/**
+ * Implementation of lootz_hook_filter_tips()
+ */
+function wowhead_filter_tips() {
+  return t('You can include [item][/item] tags to automatically link the items to <a href="http://wowhead.com">Wowhead</a>. Either use the <em>Item ID</em> ([item]29171[/item]) or the <em>exact name</em> ([item]Earthwarden[/item])');
+}
+
+/**
+ * Replace [item] tags with corresponding values, if found
+ */
+function _wowhead_filter_process($text, $format) {
+	
+# old match: '#\[item\]([0-9a-zA-Z ]+)\[/item\]#'
+	if (preg_match_all('#\[item\](.*?)\[/item\]#si',$text, $links, PREG_SET_ORDER)) {
+		foreach ($links as $match) {
+			
+			// Get the XML object for the item (using Cache if possible)
+			$url = 'http://www.wowhead.com/?item=' . _wowhead_urlencode($match[1]) . '&xml';
+			if ( $cache = cache_get($url) && !empty($cache->data) ) {
+				$cached = 'Used Cache';
+				$xml = unserialize($cache->data);
+			} else {
+				$cached = 'Loaded from Wowhead';
+				$url_contents = file_get_contents($url);
+				$xml = simplexml_load_string($url_contents);
+				cache_set($url, 'cache', serialize($xml));
+			}
+						
+			// Build the new link and replace the [item] tags
+			$new_link = '<strong><a href="' . $xml->item->link . '" class="q'. $xml->item->quality['id'] .'">[' . $xml->item->name . ']</a></strong>';
+			$text = str_replace($match[0], $new_link, $text);
+		}
+	}
+	
+	return $text;
+}
+
+/**
+ * nothing particularly fancy going on here
+ */
+function _wowhead_urlencode($value) {
+	return str_replace(' ', '+', $value);
+}
+
+
+?>
