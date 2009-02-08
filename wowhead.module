@@ -12,7 +12,7 @@
  */
 function wowhead_init() {
 	// Get Wowhead's fancy javascript in there
-	drupal_add_js('http://www.wowhead.com/widgets/power.js');
+	drupal_set_html_head('<script type="text/javascript" src="http://www.wowhead.com/widgets/power.js"></script>');
 }
 
 /**
@@ -65,11 +65,19 @@ function _wowhead_filter_process($text, $format) {
 				$cached = 'Loaded from Wowhead';
 				$url_contents = file_get_contents($url);
 				$xml = simplexml_load_string($url_contents);
-				cache_set($url, 'cache', serialize($xml));
+				cache_set($url, serialize($xml));
 			}
-						
-			// Build the new link and replace the [item] tags
-			$new_link = '<strong><a href="' . $xml->item->link . '" class="q'. $xml->item->quality['id'] .'">[' . $xml->item->name . ']</a></strong>';
+			
+			// Figure out if we have anything useful
+			if( $xml->item->name == '') {
+				// Build an error message
+				$new_link = '<strong>[Item Not Found]</strong>';
+			} else {
+				// Build the new link and replace the [item] tags
+				$new_link = '<strong><a href="' . $xml->item->link . '" class="q'. $xml->item->quality['id'] .'">[' . $xml->item->name . ']</a></strong>';
+			}
+			
+			// Perform the replacement
 			$text = str_replace($match[0], $new_link, $text);
 		}
 	}

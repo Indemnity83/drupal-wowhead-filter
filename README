@@ -4,5 +4,10 @@ This module implements a standard Drupal filter to allow the conversion of [item
 
 CHANGELOG
 
+Version 6.x-1.1 - Feb 08, 2009
+   * Fixed Issue #1 (SQL syntax error when linking more than one item from WoWhead)
+   * Fixed bug that prevented Wowhead Javascript from loading.
+   * Missing item definitions now display [Item Not Found] instead of an empty []
+
 Version 6.x-1.0 - Dec 11, 2008
    * Initial Release
