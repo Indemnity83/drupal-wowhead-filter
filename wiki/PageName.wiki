@@ -1,0 +1,17 @@
+= Summary =
+
+Allows the use of `[item][/item]` tags that resolve to a wowhead mouse-over link
+
+= Description =
+
+This module implements a standard Drupal filter to allow the conversion of [item][/item] tags into fancy links back to Wowhead for particular items. The links get colored automatically based on their quality level.
+
+= Changelog = 
+
+Version 6.x-1.1 - Feb 08, 2009
+   * Fixed Issue #1
+   * Fixed bug that prevented Wowhead Javascript from loading.
+   * Missing item definitions now display `[Item Not Found]` instead of an empty `[]`
+
+Version 6.x-1.0 - Dec 11, 2008
+   * Initial Release
